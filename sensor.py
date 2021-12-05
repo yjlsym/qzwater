@@ -22,9 +22,11 @@ TIME_BETWEEN_UPDATES = timedelta(minutes=60)
 
 DEFAULT_NAME = 'qzwater'
 CONF_CUSTNO = 'custno'
+CONF_TOKEN = 'token'
 PLATFORM_SCHEMA = PLATFORM_SCHEMA.extend(
     {
         vol.Required(CONF_CUSTNO): cv.string,
+        vol.Required(CONF_TOKEN): cv.string,
         vol.Optional(CONF_NAME, default= DEFAULT_NAME): cv.string
     }
 )
@@ -39,22 +41,24 @@ HEADERS = {
     'Accept-Language': 'zh-cn',
     'Accept-Encoding': 'gzip, deflate'
 }
-API_URL = "https://apiservicehall.wegist.cn/index.php/wap/Customeraccount/query_account_arrearage?caid=612&token=cWdxbVAyTUNOTWgzZFdWTDZ1Nis2dz09"
+API_URL = "https://apiservicehall.wegist.cn/index.php/wap/Customeraccount/query_account_arrearage"
 
 def setup_platform(hass: HomeAssistant,config: ConfigType,add_entities: AddEntitiesCallback,discovery_info: DiscoveryInfoType | None = None) -> None:
     _LOGGER.info("Setup platform sensor.qzwater")
     custno = config.get(CONF_CUSTNO)
     sensor_name = config.get(CONF_NAME)
+    token = config.get(CONF_TOKEN)
     query_dict = {"company_id": 366,"customer_code": custno}
     #water=QZWater(sensor_name,query_dict)
-    add_entities([QZWater(sensor_name,query_dict)])
+    add_entities([QZWater(token,sensor_name,query_dict)])
 
 class QZWater(SensorEntity):
-    def __init__(self,sensor_name,query_dict):
+    def __init__(self,token,sensor_name,query_dict):
         self.attributes = {}
         self._state = None
         self._query_dict = query_dict
         self._name = sensor_name
+        self._token = token
 
     @property
     def name(self):
@@ -79,7 +83,7 @@ class QZWater(SensorEntity):
     @Throttle(TIME_BETWEEN_UPDATES)
     def update(self):
         # try:
-        response = requests.post(API_URL,params=self._query_dict,headers = HEADERS)
+        response = requests.post(API_URL+"?caid=612&token="+self._token,params=self._query_dict,headers = HEADERS)
         # except ReadTimeout:
         #     _LOGGER.error("Connection timeout....")
         # except ConnectionError:
