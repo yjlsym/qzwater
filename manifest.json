@@ -1,0 +1,10 @@
+{
+  "domain": "qzwater",
+  "name": "qzwater",
+  "documentation": "https://github.com/yjlsym/qzwater",
+  "dependencies": [],
+  "codeowners": [],
+  "requirements": [],
+  "iot_class": "local_polling",
+  "version": "0.1.0"
+}
