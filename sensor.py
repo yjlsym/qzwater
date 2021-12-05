@@ -83,7 +83,7 @@ class QZWater(SensorEntity):
     @Throttle(TIME_BETWEEN_UPDATES)
     def update(self):
         # try:
-        response = requests.post(API_URL+"?caid=612&token="+self._token,params=self._query_dict,headers = HEADERS)
+        response = requests.post(API_URL + "?caid=612&token=" + self._token,params=self._query_dict,headers = HEADERS)
         # except ReadTimeout:
         #     _LOGGER.error("Connection timeout....")
         # except ConnectionError:
